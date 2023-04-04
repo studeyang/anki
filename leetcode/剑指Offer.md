@@ -2,8 +2,6 @@
 
 # 3. 数组中重复的数字
 
-## 题目链接
-
 [牛客网](https://www.nowcoder.com/practice/6fe361ede7e54db1b84adc81d09d8524?tpId=13&tqId=11203&tab=answerKey&from=cyc_github)
 
 ## 题目描述
@@ -53,8 +51,6 @@ private void swap(int[] nums, int i, int j) {
 
 # 4. 二维数组中的查找
 
-## 题目链接
-
 [牛客网](https://www.nowcoder.com/practice/abc3fe2ce8e146608e868a70efebf62e?tpId=13&tqId=11154&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
 
 ## 题目描述
@@ -102,8 +98,6 @@ public boolean Find(int target, int[][] matrix) {
 ```
 
 # 5. 替换空格
-
-## 题目链接
 
 [牛客网](https://www.nowcoder.com/practice/0e26e5551f2b489b9f58bc83aa4b6c68?tpId=13&tqId=11155&tab=answerKey&from=cyc_github)
 
@@ -154,8 +148,6 @@ public String replaceSpace(StringBuffer str) {
 
 # 6. 从尾到头打印链表
 
-## 题目链接
-
 [牛客网](https://www.nowcoder.com/practice/d0267f7f55b3412ba93bd35cfa8e8035?tpId=13&tqId=11156&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
 
 ## 题目描述
@@ -185,8 +177,6 @@ public ArrayList<Integer> printListFromTailToHead(ListNode listNode) {
 ```
 
 # 7. 重建二叉树
-
-## 题目链接
 
 [牛客网](https://www.nowcoder.com/practice/8a19cbe657394eeaac2f6ea9b0f6fcf6?tpId=13&tqId=11157&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
 
@@ -224,7 +214,288 @@ private TreeNode reConstructBinaryTree(int[] pre, int preL, int preR, int inL) {
 }
 ```
 
+# 8. 二叉树的下一个结点
 
+[牛客网](https://www.nowcoder.com/practice/9023a0c988684a53960365b889ceaf5e?tpId=13&tqId=11210&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
+
+## 题目描述
+
+给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回 。注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。
+
+```java
+public class TreeLinkNode {
+
+    int val;
+    TreeLinkNode left = null;
+    TreeLinkNode right = null;
+    TreeLinkNode next = null; // 指向父结点的指针
+
+    TreeLinkNode(int val) {
+        this.val = val;
+    }
+}
+```
+
+## 解题思路
+
+我们先来回顾一下中序遍历的过程：先遍历树的左子树，再遍历根节点，最后再遍历右子树。所以最左节点是中序遍历的第一个节点。
+
+```java
+void traverse(TreeNode root) {
+    if (root == null) return;
+    traverse(root.left);
+    visit(root);
+    traverse(root.right);
+}
+```
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/ad5cc8fc-d59b-45ce-8899-63a18320d97e.gif" width="300px"/> </div><br>
+
+① 如果一个节点的右子树不为空，那么该节点的下一个节点是右子树的最左节点；
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/7008dc2b-6f13-4174-a516-28b2d75b0152.gif" width="300px"/> </div><br>
+
+② 否则，向上找第一个左链接指向的树包含该节点的祖先节点。
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/094e3ac8-e080-4e94-9f0a-64c25abc695e.gif" width="300px"/> </div><br>
+
+```java
+public TreeLinkNode GetNext(TreeLinkNode pNode) {
+    if (pNode.right != null) {
+        TreeLinkNode node = pNode.right;
+        while (node.left != null)
+            node = node.left;
+        return node;
+    } else {
+        while (pNode.next != null) {
+            TreeLinkNode parent = pNode.next;
+            if (parent.left == pNode)
+                return parent;
+            pNode = pNode.next;
+        }
+    }
+    return null;
+}
+```
+
+# 9. 用两个栈实现队列
+
+[牛客网](https://www.nowcoder.com/practice/54275ddae22f475981afa2244dd448c6?tpId=13&tqId=11158&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
+
+## 题目描述
+
+用两个栈来实现一个队列，完成队列的 Push 和 Pop 操作。
+
+## 解题思路
+
+in 栈用来处理入栈（push）操作，out 栈用来处理出栈（pop）操作。一个元素进入 in 栈之后，出栈的顺序被反转。当元素要出栈时，需要先进入 out 栈，此时元素出栈顺序再一次被反转，因此出栈顺序就和最开始入栈顺序是相同的，先进入的元素先退出，这就是队列的顺序。
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/3ea280b5-be7d-471b-ac76-ff020384357c.gif" width="450"/> </div><br>
+
+```java
+Stack<Integer> in = new Stack<Integer>();
+Stack<Integer> out = new Stack<Integer>();
+
+public void push(int node) {
+    in.push(node);
+}
+
+public int pop() throws Exception {
+    if (out.isEmpty())
+        while (!in.isEmpty())
+            out.push(in.pop());
+
+    if (out.isEmpty())
+        throw new Exception("queue is empty");
+
+    return out.pop();
+}
+```
+
+# 10.1 斐波那契数列
+
+[牛客网](https://www.nowcoder.com/practice/c6c7742f5ba7442aada113136ddea0c3?tpId=13&tqId=11160&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
+
+## 题目描述
+
+求斐波那契数列的第 n 项，n \<= 39。
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/45be9587-6069-4ab7-b9ac-840db1a53744.jpg" width="330px"> </div><br>
+
+## 解题思路
+
+如果使用递归求解，会重复计算一些子问题。例如，计算 f(4) 需要计算 f(3) 和 f(2)，计算 f(3) 需要计算 f(2) 和 f(1)，可以看到 f(2) 被重复计算了。
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/c13e2a3d-b01c-4a08-a69b-db2c4e821e09.png" width="350px"/> </div><br>
+
+递归是将一个问题划分成多个子问题求解，动态规划也是如此，但是动态规划会把子问题的解缓存起来，从而避免重复求解子问题。
+
+```java
+public int Fibonacci(int n) {
+    if (n <= 1)
+        return n;
+    int[] fib = new int[n + 1];
+    fib[1] = 1;
+    for (int i = 2; i <= n; i++)
+        fib[i] = fib[i - 1] + fib[i - 2];
+    return fib[n];
+}
+```
+
+考虑到第 i 项只与第 i-1 和第 i-2 项有关，因此只需要存储前两项的值就能求解第 i 项，从而将空间复杂度由 O(N) 降低为 O(1)。
+
+```java
+public int Fibonacci(int n) {
+    if (n <= 1)
+        return n;
+    int pre2 = 0, pre1 = 1;
+    int fib = 0;
+    for (int i = 2; i <= n; i++) {
+        fib = pre2 + pre1;
+        pre2 = pre1;
+        pre1 = fib;
+    }
+    return fib;
+}
+```
+
+# 10.2 矩形覆盖
+
+[牛客网](https://www.nowcoder.com/practice/72a5a919508a4251859fb2cfb987a0e6?tpId=13&tqId=11163&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
+
+## 题目描述
+
+我们可以用 2\*1 的小矩形横着或者竖着去覆盖更大的矩形。请问用 n 个 2\*1 的小矩形无重叠地覆盖一个 2\*n 的大矩形，总共有多少种方法？
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/b903fda8-07d0-46a7-91a7-e803892895cf.gif" width="100px"> </div><br>
+
+## 解题思路
+
+当 n 为 1 时，只有一种覆盖方法：
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/f6e146f1-57ad-411b-beb3-770a142164ef.png" width="100px"> </div><br>
+
+当 n 为 2 时，有两种覆盖方法：
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/fb3b8f7a-4293-4a38-aae1-62284db979a3.png" width="200px"> </div><br>
+
+要覆盖 2\*n 的大矩形，可以先覆盖 2\*1 的矩形，再覆盖 2\*(n-1) 的矩形；或者先覆盖 2\*2 的矩形，再覆盖 2\*(n-2) 的矩形。而覆盖 2\*(n-1) 和 2\*(n-2) 的矩形可以看成子问题。该问题的递推公式如下：
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/508c6e52-9f93-44ed-b6b9-e69050e14807.jpg" width="370px"> </div><br>
+
+```java
+public int rectCover(int n) {
+    if (n <= 2)
+        return n;
+    int pre2 = 1, pre1 = 2;
+    int result = 0;
+    for (int i = 3; i <= n; i++) {
+        result = pre2 + pre1;
+        pre2 = pre1;
+        pre1 = result;
+    }
+    return result;
+}
+```
+
+# 10.3 跳台阶
+
+[牛客网](https://www.nowcoder.com/practice/8c82a5b80378478f9484d87d1c5f12a4?tpId=13&tqId=11161&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
+
+## 题目描述
+
+一只青蛙一次可以跳上 1 级台阶，也可以跳上 2 级。求该青蛙跳上一个 n 级的台阶总共有多少种跳法。
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/9dae7475-934f-42e5-b3b3-12724337170a.png" width="380px"> </div><br>
+
+## 解题思路
+
+当 n = 1 时，只有一种跳法：
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/72aac98a-d5df-4bfa-a71a-4bb16a87474c.png" width="250px"> </div><br>
+
+当 n = 2 时，有两种跳法：
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/1b80288d-1b35-4cd3-aa17-7e27ab9a2389.png" width="300px"> </div><br>
+
+跳 n 阶台阶，可以先跳 1 阶台阶，再跳 n-1 阶台阶；或者先跳 2 阶台阶，再跳 n-2 阶台阶。而 n-1 和 n-2 阶台阶的跳法可以看成子问题，该问题的递推公式为：
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/508c6e52-9f93-44ed-b6b9-e69050e14807.jpg" width="350px"> </div><br>
+
+```java
+public int JumpFloor(int n) {
+    if (n <= 2)
+        return n;
+    int pre2 = 1, pre1 = 2;
+    int result = 0;
+    for (int i = 2; i < n; i++) {
+        result = pre2 + pre1;
+        pre2 = pre1;
+        pre1 = result;
+    }
+    return result;
+}
+```
+
+# 10.4 变态跳台阶
+
+[牛客网](https://www.nowcoder.com/practice/22243d016f6b47f2a6928b4313c85387?tpId=13&tqId=11162&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
+
+## 题目描述
+
+一只青蛙一次可以跳上 1 级台阶，也可以跳上 2 级... 它也可以跳上 n 级。求该青蛙跳上一个 n 级的台阶总共有多少种跳法。
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/cd411a94-3786-4c94-9e08-f28320e010d5.png" width="380px"> </div><br>
+
+## 解题思路
+
+动态规划算法的基本思想是：将待求解的问题分解成若干个相互联系的子问题，先求解子问题，然后从这些子问题的解得到原问题的解；
+
+对于重复出现的子问题，只在第一次遇到的时候对它进行求解，并把答案保存起来，让以后再次遇到时直接引用答案，不必重新求解。动态规划算法将问题的解决方案视为一系列决策的结果。
+
+跳上 n-1 级台阶，可以从 n-2 级跳 1 级上去，也可以从 n-3 级跳 2 级上去...，那么
+
+```
+f(n-1) = f(n-2) + f(n-3) + ... + f(0)
+```
+
+同样，跳上 n 级台阶，可以从 n-1 级跳 1 级上去，也可以从 n-2 级跳 2 级上去... ，那么
+
+```
+f(n) = f(n-1) + f(n-2) + ... + f(0)
+```
+
+综上可得
+
+```
+f(n) - f(n-1) = f(n-1)
+```
+
+即
+
+```
+f(n) = 2*f(n-1)
+```
+
+f(1) 和 f(2) 可以提前算出来：
+
+```
+f(1) = 1
+f(2) = 2
+```
+
+```java
+public int jumpFloorII(int target) {
+    int[] dp = new int[target + 1];
+    //初始化前面两个
+    dp[1] = 1;
+    dp[2] = 2;
+    //依次乘2
+    for(int i = 3; i <= target; i++)
+        dp[i] = 2 * dp[i - 1];
+    return dp[target];
+}
+```
 
 
 
