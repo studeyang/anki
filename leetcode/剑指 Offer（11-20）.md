@@ -255,6 +255,8 @@ class Solution {
 
 # 17. 打印从 1 到最大的 n 位数
 
+https://leetcode.cn/problems/da-yin-cong-1dao-zui-da-de-nwei-shu-lcof/
+
 ## 题目描述
 
 输入数字 n，按顺序打印出从 1 到最大的 n 位十进制数。比如输入 3，则打印出 1、2、3 一直到最大的 3 位数即 999。
@@ -271,7 +273,7 @@ class Solution {
 ```java
 class Solution {
     public int[] printNumbers(int n) {
-        int end = (int)Math.pow(10, n) - 1;
+        int end = (int) Math.pow(10, n) - 1;
         int[] res = new int[end];
         for(int i = 0; i < end; i++)
             res[i] = i + 1;
@@ -280,158 +282,140 @@ class Solution {
 }
 ```
 
-# 18.1 在 O(1) 时间内删除链表节点
+# 18 删除链表节点
 
-## 解题思路
-
-① 如果该节点不是尾节点，那么可以直接将下一个节点的值赋给该节点，然后令该节点指向下下个节点，再删除下一个节点，时间复杂度为 O(1)。
-
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/1176f9e1-3442-4808-a47a-76fbaea1b806.png" width="600"/> </div><br>
-
-② 否则，就需要先遍历链表，找到节点的前一个节点，然后让前一个节点指向 null，时间复杂度为 O(N)。
-
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/4bf8d0ba-36f0-459e-83a0-f15278a5a157.png" width="600"/> </div><br>
-
-综上，如果进行 N 次操作，那么大约需要操作节点的次数为 N-1+N=2N-1，其中 N-1 表示 N-1 个不是尾节点的每个节点以 O(1) 的时间复杂度操作节点的总次数，N 表示 1 个尾节点以 O(N) 的时间复杂度操作节点的总次数。(2N-1)/N \~ 2，因此该算法的平均时间复杂度为 O(1)。
-
-```java
-public ListNode deleteNode(ListNode head, ListNode tobeDelete) {
-    if (head == null || tobeDelete == null)
-        return null;
-    if (tobeDelete.next != null) {
-        // 要删除的节点不是尾节点
-        ListNode next = tobeDelete.next;
-        tobeDelete.val = next.val;
-        tobeDelete.next = next.next;
-    } else {
-        if (head == tobeDelete)
-             // 只有一个节点
-            head = null;
-        else {
-            ListNode cur = head;
-            while (cur.next != tobeDelete)
-                cur = cur.next;
-            cur.next = null;
-        }
-    }
-    return head;
-}
-```
-
-# 18.2 删除链表中重复的结点
-
-[牛客网](https://www.nowcoder.com/practice/fc533c45b73a41b0b44ccba763f866ef?tpId=13&tqId=11209&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
+https://leetcode.cn/problems/shan-chu-lian-biao-de-jie-dian-lcof/
 
 ## 题目描述
 
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/17e301df-52e8-4886-b593-841a16d13e44.png" width="450"/> </div><br>
+给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
 
-## 解题描述
+返回删除后的链表的头节点。
+
+```
+输入: head = [4,5,1,9], val = 5
+输出: [4,1,9]
+解释: 给定你链表中值为 5 的第二个节点，那么在调用了你的函数之后，该链表应变为 4 -> 1 -> 9.
+```
+
+## 解题思路
+
+本题删除值为 val 的节点分需为两步：定位节点、修改引用。
+
+1. 定位节点： 遍历链表，直到 head.val == val 时跳出，即可定位目标节点。
+2. 修改引用： 设节点 cur 的前驱节点为 pre ，后继节点为 cur.next ；则执行 pre.next = cur.next ，即可实现删除 cur 节点。
+
+![image-20230407222417109](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304072224255.png)
 
 ```java
-public ListNode deleteDuplication(ListNode pHead) {
-    if (pHead == null || pHead.next == null)
-        return pHead;
-    ListNode next = pHead.next;
-    if (pHead.val == next.val) {
-        while (next != null && pHead.val == next.val)
-            next = next.next;
-        return deleteDuplication(next);
-    } else {
-        pHead.next = deleteDuplication(pHead.next);
-        return pHead;
+class Solution {
+    public ListNode deleteNode(ListNode head, int val) {
+        if(head.val == val) return head.next;
+        ListNode pre = head, cur = head.next;
+        while(cur != null && cur.val != val) {
+            pre = cur;
+            cur = cur.next;
+        }
+        if(cur != null) pre.next = cur.next;
+        return head;
     }
 }
 ```
 
 # 19. 正则表达式匹配
 
-[牛客网](https://www.nowcoder.com/practice/28970c15befb4ff3a264189087b99ad4?tpId=13&tqId=11205&tab=answerKey&from=cyc_github)
+https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/
 
 ## 题目描述
 
-请实现一个函数用来匹配包括 '.' 和 '\*' 的正则表达式。模式中的字符 '.' 表示任意一个字符，而 '\*' 表示它前面的字符可以出现任意次（包含 0 次）。
+`请实现一个函数用来匹配包含'. '和'*'的正则表达式。模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但与"aa.a"和"ab*a"均不匹配。`
 
-在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串 "aaa" 与模式 "a.a" 和 "ab\*ac\*a" 匹配，但是与 "aa.a" 和 "ab\*a" 均不匹配。
+```
+输入:
+s = "aa"
+p = "a"
+输出: false
+解释: "a" 无法匹配 "aa" 整个字符串。
+
+输入:
+s = "aa"
+p = "a*"
+输出: true
+解释: 因为 '*' 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 'a'。因此，字符串 "aa" 可被视为 'a' 重复了一次。
+```
 
 ## 解题思路
 
-应该注意到，'.' 是用来当做一个任意字符，而 '\*' 是用来重复前面的字符。这两个的作用不同，不能把 '.' 的作用和 '\*' 进行类比，从而把它当成重复前面字符一次。
+https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/solution/zhu-xing-xiang-xi-jiang-jie-you-qian-ru-shen-by-je/
 
 ```java
-public boolean match(String str, String pattern) {
 
-    int m = str.length(), n = pattern.length();
-    boolean[][] dp = new boolean[m + 1][n + 1];
-
-    dp[0][0] = true;
-    for (int i = 1; i <= n; i++)
-        if (pattern.charAt(i - 1) == '*')
-            dp[0][i] = dp[0][i - 2];
-
-    for (int i = 1; i <= m; i++)
-        for (int j = 1; j <= n; j++)
-            if (str.charAt(i - 1) == pattern.charAt(j - 1) || pattern.charAt(j - 1) == '.')
-                dp[i][j] = dp[i - 1][j - 1];
-            else if (pattern.charAt(j - 1) == '*')
-                if (pattern.charAt(j - 2) == str.charAt(i - 1) || pattern.charAt(j - 2) == '.') {
-                    dp[i][j] |= dp[i][j - 1]; // a* counts as single a
-                    dp[i][j] |= dp[i - 1][j]; // a* counts as multiple a
-                    dp[i][j] |= dp[i][j - 2]; // a* counts as empty
-                } else
-                    dp[i][j] = dp[i][j - 2];   // a* only counts as empty
-
-    return dp[m][n];
-}
 ```
 
 # 20. 表示数值的字符串
 
-[牛客网](https://www.nowcoder.com/practice/e69148f8528c4039ad89bb2546fd4ff8?tpId=13&tqId=11206&tab=answerKey&from=cyc_github)
+https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/
 
 ## 题目描述
 
-```
-true
+请实现一个函数用来判断字符串是否表示**数值**（包括整数和小数）。
 
-"+100"
-"5e2"
-"-123"
-"3.1416"
-"-1E-16"
-```
+数值（按顺序）可以分成以下几个部分：
 
-```
-false
+- 若干空格
+- 一个 小数 或者 整数
+- （可选）一个 'e' 或 'E' ，后面跟着一个 整数
+- 若干空格
 
-"12e"
-"1a3.14"
-"1.2.3"
-"+-5"
-"12e+4.3"
-```
+小数（按顺序）可以分成以下几个部分：
+
+- （可选）一个符号字符（'+' 或 '-'）
+- 下述格式之一：
+  - 至少一位数字，后面跟着一个点 '.'
+  - 至少一位数字，后面跟着一个点 '.' ，后面再跟着至少一位数字
+  - 一个点 '.' ，后面跟着至少一位数字
+
+整数（按顺序）可以分成以下几个部分：
+
+- （可选）一个符号字符（'+' 或 '-'）
+- 至少一位数字
+
+部分数值列举：["+100", "5e2", "-123", "3.1416", "-1E-16", "0123"]
+
+部分非数值列举：["12e", "1a3.14", "1.2.3", "+-5", "12e+5.4"]
 
 
 ## 解题思路
 
-使用正则表达式进行匹配。
-
-```html
-[]  ： 字符集合
-()  ： 分组
-?   ： 重复 0 ~ 1 次
-+   ： 重复 1 ~ n 次
-*   ： 重复 0 ~ n 次
-.   ： 任意字符
-\\. ： 转义后的 .
-\\d ： 数字
-```
+https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/solution/mian-shi-ti-20-biao-shi-shu-zhi-de-zi-fu-chuan-y-2/
 
 ```java
-public boolean isNumeric (String str) {
-    if (str == null || str.length() == 0)
-        return false;
-    return new String(str).matches("[+-]?\\d*(\\.\\d+)?([eE][+-]?\\d+)?");
+class Solution {
+    public boolean isNumber(String s) {
+        Map[] states = {
+            new HashMap<>() {{ put(' ', 0); put('s', 1); put('d', 2); put('.', 4); }}, // 0.
+            new HashMap<>() {{ put('d', 2); put('.', 4); }},                           // 1.
+            new HashMap<>() {{ put('d', 2); put('.', 3); put('e', 5); put(' ', 8); }}, // 2.
+            new HashMap<>() {{ put('d', 3); put('e', 5); put(' ', 8); }},              // 3.
+            new HashMap<>() {{ put('d', 3); }},                                        // 4.
+            new HashMap<>() {{ put('s', 6); put('d', 7); }},                           // 5.
+            new HashMap<>() {{ put('d', 7); }},                                        // 6.
+            new HashMap<>() {{ put('d', 7); put(' ', 8); }},                           // 7.
+            new HashMap<>() {{ put(' ', 8); }}                                         // 8.
+        };
+        int p = 0;
+        char t;
+        for(char c : s.toCharArray()) {
+            if(c >= '0' && c <= '9') t = 'd';
+            else if(c == '+' || c == '-') t = 's';
+            else if(c == 'e' || c == 'E') t = 'e';
+            else if(c == '.' || c == ' ') t = c;
+            else t = '?';
+            if(!states[p].containsKey(t)) return false;
+            p = (int)states[p].get(t);
+        }
+        return p == 2 || p == 3 || p == 7 || p == 8;
+    }
 }
 ```
 
