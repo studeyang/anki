@@ -328,7 +328,7 @@ https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/
 
 ## 题目描述
 
-`请实现一个函数用来匹配包含'. '和'*'的正则表达式。模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但与"aa.a"和"ab*a"均不匹配。`
+`请实现一个函数用来匹配包含'.'和'*'的正则表达式。模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但与"aa.a"和"ab*a"均不匹配。`
 
 ```
 输入:
@@ -346,9 +346,66 @@ p = "a*"
 
 ## 解题思路
 
-https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/solution/zhu-xing-xiang-xi-jiang-jie-you-qian-ru-shen-by-je/
+https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/solution/jian-zhi-offer-19-zheng-ze-biao-da-shi-pi-pei-dong/
+
+设 s 的长度为 n，p 的长度为 m；
+
+将 s 的第 i 个字符记为 s<sub>i</sub> ，p 的第 j 个字符记为 p<sub>j</sub>；（i, j 从 0 开始）
+
+将 s 的前 i 个字符组成的子字符串记为 s[:i]。
+
+因此，本题可转化为求 s[:n] 是否能和 p[:m] 匹配。假设 s[:n] 与 p[:m] 可以匹配，那么下一状态有两种：
+
+1. 添加一个字符 s<sub>i+1</sub> 后是否能匹配？
+2. 添加字符 p<sub>j+1</sub> 后是否能匹配？
+
+![image-20230409231830063](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304092318189.png)
+
+当 `p[j - 1] = '*'` 时， `dp[i][j]` 在当以下任一情况为 true 时等于 true：
+
+1. **`dp[i - 1][j]` 且 `s[i - 1] = p[j - 2]`:** 即让字符 `p[j - 2]` 多出现 1 次时，能否匹配；
+2. **`dp[i - 1][j]` 且 `s[i - 1] = p[j - 2]`:** 即让字符 `p[j - 2]` 多出现 1 次时，能否匹配；
+3. **`dp[i - 1][j]` 且 `p[j - 2] = '.'`:** 即让字符 `'.'` 多出现 1 次时，能否匹配；
+
+当 `p[j - 1] != '*'` 时， `dp[i][j]` 在当以下任一情况为 true 时等于 true：
+
+1. **`dp[i - 1][j - 1]` 且 `s[i - 1] = p[j - 1]`：** 即让字符 `p[j - 1]` 多出现一次时，能否匹配；
+2. **`dp[i - 1][j - 1]` 且 `p[j - 1] = '.'`：** 即将字符 `.` 看作字符 `s[i - 1]` 时，能否匹配；
+
+初始化： 需要先初始化 dp 矩阵首行，以避免状态转移时索引越界。
+
+- `dp[0][0] = true`： 代表两个空字符串能够匹配。
+- `dp[0][j] = dp[0][j - 2] 且 p[j - 1] = '*'`： 首行 s 为空字符串，因此当 p 的偶数位为 * 时才能够匹配（即让 p 的奇数位出现 0 次，保持 p 是空字符串）。因此，循环遍历字符串 p ，步长为 2（即只看偶数位）。
+
+![image-20230409223134258](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304092231402.png)
+
+![iShot_2023-04-09_23.37.41](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304092338363.gif)
 
 ```java
+class Solution {
+    public boolean isMatch(String s, String p) {
+        int m = s.length() + 1, n = p.length() + 1;
+        boolean[][] dp = new boolean[m][n];
+        dp[0][0] = true;
+        // 初始化首行
+        for(int j = 2; j < n; j += 2)
+            dp[0][j] = dp[0][j - 2] && p.charAt(j - 1) == '*';
+        // 状态转移
+        for(int i = 1; i < m; i++) {
+            for(int j = 1; j < n; j++) {
+                if(p.charAt(j - 1) == '*') {
+                    if(dp[i][j - 2]) dp[i][j] = true;                                            // 1.
+                    else if(dp[i - 1][j] && s.charAt(i - 1) == p.charAt(j - 2)) dp[i][j] = true; // 2.
+                    else if(dp[i - 1][j] && p.charAt(j - 2) == '.') dp[i][j] = true;             // 3.
+                } else {
+                    if(dp[i - 1][j - 1] && s.charAt(i - 1) == p.charAt(j - 1)) dp[i][j] = true;  // 1.
+                    else if(dp[i - 1][j - 1] && p.charAt(j - 1) == '.') dp[i][j] = true;         // 2.
+                }
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+}
 
 ```
 
@@ -358,7 +415,7 @@ https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/
 
 ## 题目描述
 
-请实现一个函数用来判断字符串是否表示**数值**（包括整数和小数）。
+请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。
 
 数值（按顺序）可以分成以下几个部分：
 
@@ -387,7 +444,29 @@ https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/
 
 ## 解题思路
 
-https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/solution/mian-shi-ti-20-biao-shi-shu-zhi-de-zi-fu-chuan-y-2/
+https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/solution/mian-shi-ti-20-biao-shi-shu-zhi-de-zi-fu-chuan-y-2/
+
+本题使用有限状态自动机。根据字符类型和合法数值的特点，先定义状态，再画出状态转移图，最后编写代码即可。
+
+**状态定义：**
+
+按照字符串从左到右的顺序，定义以下 9 种状态。
+
+0. 开始的空格
+1. 幂符号前的正负号
+2. 小数点前的数字
+3. 小数点、小数点后的数字
+4. 当小数点前为空格时，小数点、小数点后的数字
+5. 幂符号
+6. 幂符号后的正负号
+7. 幂符号后的数字
+8. 结尾的空格
+
+**结束状态：**
+
+合法的结束状态有 2, 3, 7, 8 。
+
+![image-20230409234426231](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304092344340.png)
 
 ```java
 class Solution {
@@ -418,6 +497,4 @@ class Solution {
     }
 }
 ```
-
-
 
