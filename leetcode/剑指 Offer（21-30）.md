@@ -1,213 +1,184 @@
-# 11. 旋转数组的最小数字
+# 21. [调整数组顺序使奇数位于偶数前面](https://leetcode.cn/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/)
 
 ## 题目描述【简单】
 
-把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。
-
-给你一个可能存在 重复 元素值的数组 numbers ，它原来是一个升序排列的数组，并按上述情形进行了一次旋转。请返回旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一次旋转，该数组的最小值为 1。  
-
-注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]] 。
-
-来源：力扣（LeetCode）
-链接：https://leetcode.cn/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
-
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/0038204c-4b8a-42a5-921d-080f6674f989.png" width="210px"> </div>
-
-## 解题思路
-
-排序数组的查找问题首先考虑使用 二分法 解决。
-
-1、初始化 i、j、m
-
-![image-20230405204830938](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230405204830938.png)
-
-2、因为 array[m] > array[j]，执行 i = m + 1，同时更新 m 的位置
-
-![image-20230405205034652](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230405205034652.png)
-
-3、因为 array[m] < array[j]，执行 j = m，同时更新 m 的位置
-
-![image-20230405205042435](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230405205042435.png)
-
-4、因为 array[m] < array[j]，执行 j = m
-
-![image-20230405205049978](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230405205049978.png)
-
-5、因为 i == j；跳出循环返回 array[i] = 1
-
-![image-20230405205057883](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230405205057883.png)
-
-```java
-import java.util.ArrayList;
-public class Solution {
-    public int minNumberInRotateArray(int [] array) {
-        // 特殊情况判断
-        if (array.length == 0) {
-            return 0;
-        }
-        // 左右指针i j
-        int i = 0, j = array.length - 1;
-        // 循环
-        while (i < j) {
-            // 找到数组的中点 m
-            int m = (i + j) / 2;
-            // m在左排序数组中，旋转点在 [m+1, j] 中
-            if (array[m] > array[j]) i = m + 1;
-            // m 在右排序数组中，旋转点在 [i, m]中
-            else if (array[m] < array[j]) j = m;
-            // 缩小范围继续判断
-            else j--;
-        }
-        // 返回旋转点
-        return array[i];
-    }
-}
-```
-
-# 12. 矩阵中的路径
-
-https://leetcode.cn/problems/ju-zhen-zhong-de-lu-jing-lcof/
-
-## 题目描述【中等】
-
-给定一个 `m x n` 二维字符网格 `board` 和一个字符串单词 `word` 。如果 `word` 存在于网格中，返回 `true` ；否则，返回 `false` 。
-
-例如，在下面的 3×4 的矩阵中包含单词 "ABCCED"（单词中的字母已标出）。
-
-![image-20230405211952559](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230405211952559.png)
+输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有奇数在数组的前半部分，所有偶数在数组的后半部分。
 
 示例：
 
 ```
-输入：board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
-输出：true
+输入：nums = [1,2,3,4]
+输出：[1,3,2,4] 
+注：[3,1,2,4] 也是正确的答案之一。
 ```
 
 ## 解题思路
 
-使用 深度优先搜索（DFS）+ 剪枝 解决。
+1、初始化：i,j 双指针，分别指向数据 nums 左右两端；
 
-深度优先搜索： 可以理解为暴力法遍历矩阵中所有字符串可能性。DFS 通过递归，先朝一个方向搜到底，再回溯至上个节点，沿另一个方向搜索，以此类推。
+2、循环交换：当 i = j 时跳出；
 
-剪枝： 在搜索中，遇到 这条路不可能和目标字符串匹配成功 的情况，则应立即返回，称之为 可行性剪枝 。
+- 指针 i 遇到奇数则执行 i = i + 1 跳过，直到找到偶数；
+- 指针 j 遇到偶数则执行 j = j - 1 跳过，直到找到奇数；
+- 交换 nums[i] 和 nums[j] 值；
 
-<div align="center"> <img src="https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230405213151700.png" width="400px"> </div>
+3、返回值：返回已修改的 nums 数组。
 
-本题的输入是数组而不是矩阵（二维数组），因此需要先将数组转换成矩阵。
-
-![iShot_2023-04-06_21.43.17](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304062144719.gif)
+![iShot_2023-04-15_23.26.49](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304152327404.gif)
 
 ```java
 class Solution {
-    public boolean exist(char[][] board, String word) {
-        char[] words = word.toCharArray();
-        for(int h = 0; h < board.length; h++) {
-            for(int l = 0; l < board[0].length; l++) {
-                if (dfs(board, words, h, l, 0)) return true;
-            }
+    public int[] exchange(int[] nums) {
+        int i = 0, j = nums.length - 1, tmp;
+        while(i < j) {
+            while(i < j && (nums[i] & 1) == 1) i++;
+            while(i < j && (nums[j] & 1) == 0) j--;
+            tmp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = tmp;
         }
-        return false;
-    }
-    boolean dfs(char[][] board, char[] words, int h, int l, int wordIndex) {
-        if (h >= board.length || h < 0 
-            || l >= board[0].length || l < 0 
-            || board[h][l] != words[wordIndex]) {
-            return false;
-        }
-        if (wordIndex == words.length - 1) return true;
-        board[h][l] = '\0';
-        boolean res = dfs(board, words, h + 1, l, wordIndex + 1) 
-            || dfs(board, words, h - 1, l, wordIndex + 1) 
-            || dfs(board, words, h, l + 1, wordIndex + 1) 
-            || dfs(board, words, h , l - 1, wordIndex + 1);
-        board[h][l] = words[wordIndex];
-        return res;
+        return nums;
     }
 }
 ```
 
-# 14. 剪绳子
-
-https://leetcode.cn/problems/jian-sheng-zi-lcof/
-
-## 题目描述【中等】
-
-给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），每段绳子的长度记为 `k[0],k[1]...k[m-1]` 。请问 `k[0]*k[1]*...*k[m-1]` 可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
-
-```html
-输入: 10
-输出: 36
-解释: 10 = 3 + 3 + 4, 3 × 3 × 4 = 36
-```
-
-## 解题思路
-
-贪心法。
-
-尽可能得多剪长度为 3 的绳子，并且不允许有长度为 1 的绳子出现。如果出现了，就从已经切好长度为 3 的绳子中拿出一段与长度为 1 的绳子重新组合，把它们切成两段长度为 2 的绳子。以下为证明过程。
-
-将绳子拆成 1 和 n-1，则 1(n-1)-n=-1\<0，即拆开后的乘积一定更小，所以不能出现长度为 1 的绳子。
-
-将绳子拆成 2 和 n-2，则 2(n-2)-n = n-4，在 n\>=4 时这样拆开能得到的乘积会比不拆更大。
-
-将绳子拆成 3 和 n-3，则 3(n-3)-n = 2n-9，在 n\>=5 时效果更好。
-
-将绳子拆成 4 和 n-4，因为 4=2\*2，因此效果和拆成 2 一样。
-
-将绳子拆成 5 和 n-5，因为 5=2+3，而 5\<2\*3，所以不能出现 5 的绳子，而是尽可能拆成 2 和 3。
-
-将绳子拆成 6 和 n-6，因为 6=3+3，而 6\<3\*3，所以不能出现 6 的绳子，而是拆成 3 和 3。这里 6 同样可以拆成 6=2+2+2，但是 3(n - 3) - 2(n - 2) = n - 5 \>= 0，在 n\>=5 的情况下将绳子拆成 3 比拆成 2 效果更好。
-
-继续拆成更大的绳子可以发现都比拆成 2 和 3 的效果更差，因此我们只考虑将绳子拆成 2 和 3，并且优先拆成 3，当拆到绳子长度 n 等于 4 时，也就是出现 3+1，此时只能拆成 2+2。
-
-![image-20230406220939645](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304062209749.png)
-
-```java
-public int cutRope(int n) {
-    if (n < 2)
-        return 0;
-    if (n == 2)
-        return 1;
-    if (n == 3)
-        return 2;
-    int timesOf3 = n / 3;
-    if (n - timesOf3 * 3 == 1)
-        timesOf3--;
-    int timesOf2 = (n - timesOf3 * 3) / 2;
-    return (int) (Math.pow(3, timesOf3)) * (int) (Math.pow(2, timesOf2));
-}
-```
-
-# 15. 二进制中 1 的个数
-
-https://leetcode.cn/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/
+# 22. [链表中倒数第k个节点](https://leetcode.cn/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof/)
 
 ## 题目描述【简单】
 
-输入一个整数，输出该数二进制表示中 1 的个数。
+输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。
+
+例如，一个链表有 6 个节点，从头节点开始，它们的值依次是 1、2、3、4、5、6。这个链表的倒数第 3 个节点是值为 4 的节点。
+
+**示例：**
+
+```
+给定一个链表: 1->2->3->4->5, 和 k = 2.
+
+返回链表 4->5.
+```
 
 ## 解题思路
 
-n&(n-1) 位运算可以将 n 的位级表示中最低的那一位 1 设置为 0。不断将 1 设置为 0，直到 n 为 0。时间复杂度：O(M)，其中 M 表示 1 的个数。
+1. **初始化：** 前指针 `former` 、后指针 `latter` ，双指针都指向头节点 `head` 。
+2. **构建双指针距离：** 前指针 `former` 先向前走 k 步（结束后，双指针 former 和 latter 间相距 k 步）。
+3. 双指针共同移动： 循环中，双指针 former 和 latter 每轮都向前走一步，直至 former 走过链表 尾节点 时跳出（跳出后， latter 与尾节点距离为 k−1，即 latter 指向倒数第 k 个节点）。
+4. 返回值： 返回 latter 即可。
 
-<div align="center"> <img src="https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304062219399.gif" width="500px"> </div>
-
+![iShot_2023-04-15_23.38.36](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304152339874.gif)
 
 ```java
-public int NumberOf1(int n) {
-    int cnt = 0;
-    while (n != 0) {
-        cnt++;
-        n &= (n - 1);
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        ListNode former = head, latter = head;
+        for(int i = 0; i < k; i++)
+            former = former.next;
+        while(former != null) {
+            former = former.next;
+            latter = latter.next;
+        }
+        return latter;
     }
-    return cnt;
 }
 ```
 
-# 16. 数值的整数次方
+# 24. [反转链表](https://leetcode.cn/problems/fan-zhuan-lian-biao-lcof/)
 
-https://leetcode.cn/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/
+## 题目描述【简单】
+
+定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点。
+
+```html
+输入: 1->2->3->4->5->NULL
+输出: 5->4->3->2->1->NULL
+```
+
+## 解题思路
+
+考虑遍历链表，并在访问各节点时修改 `next` 引用指向，算法流程见注释。
+
+![iShot_2023-04-15_23.45.23](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304152345006.gif)
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        ListNode cur = head, pre = null;
+        while(cur != null) {
+            ListNode tmp = cur.next; // 暂存后继节点 cur.next
+            cur.next = pre;          // 修改 next 引用指向
+            pre = cur;               // pre 暂存 cur
+            cur = tmp;               // cur 访问下一节点
+        }
+        return pre;
+    }
+}
+```
+
+# 25. [合并两个排序的链表](https://leetcode.cn/problems/he-bing-liang-ge-pai-xu-de-lian-biao-lcof/)
+
+## 题目描述【简单】
+
+输入两个递增排序的链表，合并这两个链表并使新链表中的节点仍然是递增排序的。
+
+示例1：
+
+```
+输入：1->2->4, 1->3->4
+输出：1->1->2->3->4->4
+```
+
+## 解题思路
+
+1. 初始化
+2. 循环合并
+3. 合并剩余尾部
+
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode dum = new ListNode(0), cur = dum;
+        while(l1 != null && l2 != null) {
+            if(l1.val < l2.val) {
+                cur.next = l1;
+                l1 = l1.next;
+            } else {
+                cur.next = l2;
+                l2 = l2.next;
+            }
+            cur = cur.next;
+        }
+        cur.next = l1 != null ? l1 : l2;
+        return dum.next;
+    }
+}
+```
+
+# 26. 
 
 ## 题目描述【中等】
 
@@ -261,9 +232,7 @@ class Solution {
 }
 ```
 
-# 17. 打印从 1 到最大的 n 位数
-
-https://leetcode.cn/problems/da-yin-cong-1dao-zui-da-de-nwei-shu-lcof/
+# 27. 
 
 ## 题目描述【简单】
 
@@ -290,9 +259,7 @@ class Solution {
 }
 ```
 
-# 18 删除链表节点
-
-https://leetcode.cn/problems/shan-chu-lian-biao-de-jie-dian-lcof/
+# 28. 
 
 ## 题目描述【简单】
 
@@ -330,11 +297,9 @@ class Solution {
 }
 ```
 
-# 19. 正则表达式匹配
+# 29. 
 
-https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/
-
-## 题目描述【困难】
+## 题目描述【简单】
 
 `请实现一个函数用来匹配包含'.'和'*'的正则表达式。模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但与"aa.a"和"ab*a"均不匹配。`
 
@@ -417,11 +382,9 @@ class Solution {
 
 ```
 
-# 20. 表示数值的字符串
+# 30. 
 
-https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/
-
-## 题目描述【中等】
+## 题目描述【简单】
 
 请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。
 
