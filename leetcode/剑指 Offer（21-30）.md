@@ -178,293 +178,364 @@ class Solution {
 }
 ```
 
-# 26. 
+# 26. [树的子结构](https://leetcode.cn/problems/shu-de-zi-jie-gou-lcof/)
 
 ## 题目描述【中等】
 
-给定一个 double 类型的浮点数 x 和 int 类型的整数 n，求 x 的 n 次方。
+输入两棵二叉树A和B，判断B是不是A的子结构。(约定空树不是任意一个树的子结构)
+
+B是A的子结构， 即 A中有出现和B相同的结构和节点值。
+
+例如:
+
+
+    给定的树 A:
+         3
+        / \
+       4   5
+      / \
+     1   2
+    
+    给定的树 B：
+       4 
+      /
+     1
+    返回 true，因为 B 与 A 的一个子树拥有相同的结构和节点值。
+示例1：
 
 ```
-输入：x = 2.00000, n = 10
-输出：1024.00000
-
-输入：x = 2.10000, n = 3
-输出：9.26100
+输入：A = [1,2,3], B = [3,1]
+输出：false
 ```
 
-输入：x = 2.00000, n = -2
+示例2：
 
-输出：0.25000
-
-解释：2<sup>-2</sup> = 1/2<sup>2</sup> = 1/4 = 0.25
+```
+输入：A = [3,4,5,1,2], B = [4,1]
+输出：true
+```
 
 ## 解题思路
 
-快速幂解析（二分法角度）：快速幂实际上是二分思想的一种应用。
+判断树 B 是否是树 A 的子结构，需完成以下两步工作：
 
-最直观的解法是将 x 重复乘 n 次，`x*x*x...*x`，那么时间复杂度为 O(N)。因为乘法是可交换的，所以可以将上述操作拆开成两半 `(x*x..*x)*(x*x..*x)`，两半的计算是一样的，因此只需要计算一次。而且对于新拆开的计算，又可以继续拆开。这就是分治思想，将原问题的规模拆成多个规模较小的子问题，最后子问题的解合并起来。
+1. 先序遍历树 A 中的每个节点 n<sub>A</sub>，对应函数 isSubStructure(A, B)；
+2. 判断树 A 中 以 n<sub>A</sub> 为根节点的子树 是否包含树 B，对应函数 recur(A, B)。
 
-本题中子问题是 x<sup>n/2</sup>，在将子问题合并时将子问题的解乘于自身相乘即可。但如果 n 不为偶数，那么拆成两半还会剩下一个 x，在将子问题合并时还需要需要多乘于一个 x。
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304161020465.png)
 
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20201105012506187.png" width="400px"> </div>
+树 A 的根节点记作节点 A，树 B 的根节点记作节点 B 。
 
-因为 `(x*x)`<sup>n/2</sup> 可以通过递归求解，并且每次递归 n 都减小一半，因此整个算法的时间复杂度为 O(logN)。
+**isSubStructure(A, B) 函数：**
 
-![image-20230406224819975](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304062248076.png)
+1. 特例处理： 当 树 A 为空 或 树 B 为空 时，直接返回 false ；
+2. 返回值： 若树 B 是树 A 的子结构，则必满足以下三种情况之一，因此用或 || 连接；
+   - 以 节点 A 为根节点的子树 包含树 B ，对应 recur(A, B)；
+   - 树 B 是 树 A 左子树 的子结构，对应 isSubStructure(A.left, B)；
+   - 树 B 是 树 A 右子树 的子结构，对应 isSubStructure(A.right, B)；
+
+**`recur(A, B)` 函数：**
+
+终止条件：
+
+1. 当节点 B 为空：说明树 B 已匹配完成（越过叶子节点），因此返回 true ；
+2. 当节点 A 为空：说明已经越过树 A 叶子节点，即匹配失败，返回 false ；
+3. 当节点 A 和 B 的值不同：说明匹配失败，返回 false ；
+
+返回值：
+
+1. 判断 A 和 B 的左子节点是否相等，即 recur(A.left, B.left) ；
+2. 判断 A 和 B 的右子节点是否相等，即 recur(A.right, B.right) ；
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304161028432.gif)
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        return (A != null && B != null) 
+            && (recur(A, B) || isSubStructure(A.left, B) || isSubStructure(A.right, B));
+    }
+    boolean recur(TreeNode A, TreeNode B) {
+        if(B == null) return true;
+        if(A == null || A.val != B.val) return false;
+        return recur(A.left, B.left) && recur(A.right, B.right);
+    }
+}
+```
+
+# 27. [二叉树的镜像](https://leetcode.cn/problems/er-cha-shu-de-jing-xiang-lcof/)
+
+## 题目描述【简单】
+
+请完成一个函数，输入一个二叉树，该函数输出它的镜像。
+
+例如输入：
+
+```
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+```
+
+镜像输出：
+
+```
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+```
+
+## 解题思路
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304161044760.png)
+
+递归法：根据二叉树镜像的定义，考虑递归遍历（dfs）二叉树，交换每个节点的左 / 右子节点，即可生成二叉树的镜像。
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode mirrorTree(TreeNode root) {
+        if (root == null) return null;
+        TreeNode leftRoot = mirrorTree(root.right);
+        TreeNode rightRoot = mirrorTree(root.left);
+        root.left = leftRoot;
+        root.right = rightRoot;
+        return root;
+    }
+}
+```
+
+# 28. [对称的二叉树](https://leetcode.cn/problems/dui-cheng-de-er-cha-shu-lcof/)
+
+## 题目描述【简单】
+
+请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
+
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+
+```
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+```
+
+但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+
+```
+    1
+   / \
+  2   2
+   \   \
+   3    3
+```
+
+**示例 1：**
+
+```
+输入：root = [1,2,2,3,4,4,3]
+输出：true
+```
+
+**示例 2：**
+
+```
+输入：root = [1,2,2,null,3,null,3]
+输出：false
+```
+
+## 解题思路
+
+对称二叉树定义： 对于树中 任意两个对称节点 L 和 R ，一定有：
+
+- L.val=R.val ：即此两对称节点值相等；
+- L.left.val=R.right.val ：即 L 的 左子节点 和 R 的 右子节点 对称；
+- L.right.val=R.left.val ：即 L 的 右子节点 和 R 的 左子节点 对称。
+
+![image-20230416111124772](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304161111914.png)
+
+根据以上规律，考虑从顶至底递归，判断每对节点是否对称，从而判断树是否为对称二叉树。
+
+**算法流程：**
+
+isSymmetric(root) ：
+
+- 特例处理： 若根节点 root 为空，则直接返回 true 。
+- 返回值： 即 recur(root.left, root.right) ;
+
+recur(L, R) ：
+
+- 终止条件：
+  - 当 L 和 R 同时越过叶节点： 此树从顶至底的节点都对称，因此返回 true ；
+  - 当 L 或 R 中只有一个越过叶节点： 此树不对称，因此返回 false ；
+  - 当节点 L 值 ≠ 节点 R 值： 此树不对称，因此返回 false ；
+- 递推工作：
+  - 判断两节点 L.left 和 R.right 是否对称，即 recur(L.left, R.right) ；
+  - 判断两节点 L.right 和 R.left 是否对称，即 recur(L.right, R.left) ；
+
+返回值： 两对节点都对称时，才是对称树，因此用与逻辑符 && 连接。
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        return root == null ? true : recur(root.left, root.right);
+    }
+    boolean recur(TreeNode L, TreeNode R) {
+        if(L == null && R == null) return true;
+        if(L == null || R == null || L.val != R.val) return false;
+        return recur(L.left, R.right) && recur(L.right, R.left);
+    }
+}
+```
+
+# 29. [顺时针打印矩阵](https://leetcode.cn/problems/shun-shi-zhen-da-yin-ju-zhen-lcof/)
+
+## 题目描述【简单】
+
+输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+
+示例1：
+
+```
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+输出：[1,2,3,6,9,8,7,4,5]
+```
+
+示例2：
+
+```
+输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+```
+
+## 解题思路
+
+考虑设定矩阵的“左、上、右、下”四个边界，模拟以上矩阵遍历顺序。
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304161125075.png)
+
+算法流程：
+
+1. 空值处理： 当 matrix 为空时，直接返回空列表 [] 即可。
+2. 初始化： 矩阵 左、右、上、下 四个边界 l , r , t , b ，用于打印的结果列表 res 。
+3. 循环打印：“从左向右、从上向下、从右向左、从下向上” 四个方向循环，每个方向打印中做以下三件事 （各方向的具体信息见下表）；
+   - 根据边界打印，即将元素按顺序添加至列表 res 尾部；
+   - 边界向内收缩 1 （代表已被打印）；
+   - 判断是否打印完毕（边界是否相遇），若打印完毕则跳出。
+4. 返回值： 返回 res 即可。
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304161130241.gif)
 
 ```java
 class Solution {
-    public double myPow(double x, int n) {
-        if(x == 0) return 0;
-        long n1 = n;
-        double res = 1.0;
-        if (n1 < 0) {
-            x = 1 / x;
-            n1 = -n1;
-        }
-        while(n1 > 0) {
-            if ((n1 & 1) == 1) res *= x;
-            x *= x;
-            n1 >>= 1;
+    public int[] spiralOrder(int[][] matrix) {
+        if(matrix.length == 0) return new int[0];
+        int l = 0, r = matrix[0].length - 1, t = 0, b = matrix.length - 1, x = 0;
+        int[] res = new int[(r + 1) * (b + 1)];
+        while(true) {
+            //从左往右，上边界内缩：++t
+            for(int i = l; i <= r; i++) res[x++] = matrix[t][i];
+            if(++t > b) break;
+            //从上往下，右边界收缩：--r
+            for(int i = t; i <= b; i++) res[x++] = matrix[i][r];
+            if(l > --r) break;
+            //从右往左，下边界收缩：--b
+            for(int i = r; i >= l; i--) res[x++] = matrix[b][i];
+            if(t > --b) break;
+            //从下到上，左边界收缩：++l
+            for(int i = b; i >= t; i--) res[x++] = matrix[i][l];
+            if(++l > r) break;
         }
         return res;
     }
 }
 ```
 
-# 27. 
+# 30. [包含min函数的栈](https://leetcode.cn/problems/bao-han-minhan-shu-de-zhan-lcof/)
 
 ## 题目描述【简单】
 
-输入数字 n，按顺序打印出从 1 到最大的 n 位十进制数。比如输入 3，则打印出 1、2、3 一直到最大的 3 位数即 999。
+定义栈的数据结构，请在该类型中实现一个能够得到栈的最小元素的 min 函数在该栈中，调用 min、push 及 pop 的时间复杂度都是 O(1)。
+
+示例：
 
 ```
-输入: n = 1
-输出: [1,2,3,4,5,6,7,8,9]
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.min();   --> 返回 -3.
+minStack.pop();
+minStack.top();      --> 返回 0.
+minStack.min();   --> 返回 -2.
 ```
+
 
 ## 解题思路
 
-由于 n 可能会非常大，因此不能直接用 int 表示数字，而是用 char 数组进行存储。
+本题难点： 将 min() 函数复杂度降为 O(1) ，可通过建立辅助栈实现；
+
+- 数据栈 A ： 栈 A 用于存储所有元素，保证入栈 push() 函数、出栈 pop() 函数、获取栈顶 top() 函数的正常逻辑。
+- 辅助栈 B ： 栈 B 中存储栈 A 中所有 非严格降序 的元素，则栈 A 中的最小元素始终对应栈 B 的栈顶元素，即 min() 函数只需返回栈 B 的栈顶元素即可。
+
+因此，只需设法维护好 栈 B 的元素，使其保持非严格降序，即可实现 `min()` 函数的 O(1) 复杂度。
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304161150406.png)
+
+
 
 ```java
-class Solution {
-    public int[] printNumbers(int n) {
-        int end = (int) Math.pow(10, n) - 1;
-        int[] res = new int[end];
-        for(int i = 0; i < end; i++)
-            res[i] = i + 1;
-        return res;
+class MinStack {
+    Stack<Integer> A, B;
+    public MinStack() {
+        A = new Stack<>();
+        B = new Stack<>();
     }
-}
-```
-
-# 28. 
-
-## 题目描述【简单】
-
-给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
-
-返回删除后的链表的头节点。
-
-```
-输入: head = [4,5,1,9], val = 5
-输出: [4,1,9]
-解释: 给定你链表中值为 5 的第二个节点，那么在调用了你的函数之后，该链表应变为 4 -> 1 -> 9.
-```
-
-## 解题思路
-
-本题删除值为 val 的节点分需为两步：定位节点、修改引用。
-
-1. 定位节点： 遍历链表，直到 head.val == val 时跳出，即可定位目标节点。
-2. 修改引用： 设节点 cur 的前驱节点为 pre ，后继节点为 cur.next ；则执行 pre.next = cur.next ，即可实现删除 cur 节点。
-
-![image-20230407222417109](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304072224255.png)
-
-```java
-class Solution {
-    public ListNode deleteNode(ListNode head, int val) {
-        if(head.val == val) return head.next;
-        ListNode pre = head, cur = head.next;
-        while(cur != null && cur.val != val) {
-            pre = cur;
-            cur = cur.next;
-        }
-        if(cur != null) pre.next = cur.next;
-        return head;
+    public void push(int x) {
+        A.add(x);
+        if(B.empty() || B.peek() >= x)
+            B.add(x);
     }
-}
-```
-
-# 29. 
-
-## 题目描述【简单】
-
-`请实现一个函数用来匹配包含'.'和'*'的正则表达式。模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但与"aa.a"和"ab*a"均不匹配。`
-
-```
-输入:
-s = "aa"
-p = "a"
-输出: false
-解释: "a" 无法匹配 "aa" 整个字符串。
-
-输入:
-s = "aa"
-p = "a*"
-输出: true
-解释: 因为 '*' 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 'a'。因此，字符串 "aa" 可被视为 'a' 重复了一次。
-```
-
-## 解题思路
-
-https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/solution/jian-zhi-offer-19-zheng-ze-biao-da-shi-pi-pei-dong/
-
-设 s 的长度为 n，p 的长度为 m；
-
-将 s 的第 i 个字符记为 s<sub>i</sub> ，p 的第 j 个字符记为 p<sub>j</sub>；（i, j 从 0 开始）
-
-将 s 的前 i 个字符组成的子字符串记为 s[:i]。
-
-因此，本题可转化为求 s[:n] 是否能和 p[:m] 匹配。假设 s[:n] 与 p[:m] 可以匹配，那么下一状态有两种：
-
-1. 添加一个字符 s<sub>i+1</sub> 后是否能匹配？
-2. 添加字符 p<sub>j+1</sub> 后是否能匹配？
-
-![image-20230409231830063](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304092318189.png)
-
-当 `p[j - 1] = '*'` 时， `dp[i][j]` 在当以下任一情况为 true 时等于 true：
-
-1. **`dp[i][j - 2]`:** 即将字符组合 `p[j - 2] *` 看作出现 0 次时，能否匹配；
-2. **`dp[i - 1][j]` 且 `s[i - 1] = p[j - 2]`:** 即让字符 `p[j - 2]` 多出现 1 次时，能否匹配；
-3. **`dp[i - 1][j]` 且 `p[j - 2] = '.'`:** 即让字符 `'.'` 多出现 1 次时，能否匹配；
-
-当 `p[j - 1] != '*'` 时， `dp[i][j]` 在当以下任一情况为 true 时等于 true：
-
-1. **`dp[i - 1][j - 1]` 且 `s[i - 1] = p[j - 1]`：** 即让字符 `p[j - 1]` 多出现一次时，能否匹配；
-2. **`dp[i - 1][j - 1]` 且 `p[j - 1] = '.'`：** 即将字符 `.` 看作字符 `s[i - 1]` 时，能否匹配；
-
-初始化： 需要先初始化 dp 矩阵首行，以避免状态转移时索引越界。
-
-- `dp[0][0] = true`： 代表两个空字符串能够匹配。
-- `dp[0][j] = dp[0][j - 2] 且 p[j - 1] = '*'`： 首行 s 为空字符串，因此当 p 的偶数位为 * 时才能够匹配（即让 p 的奇数位出现 0 次，保持 p 是空字符串）。因此，循环遍历字符串 p ，步长为 2（即只看偶数位）。
-
-![image-20230409223134258](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304092231402.png)
-
-![iShot_2023-04-09_23.37.41](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304092338363.gif)
-
-```java
-class Solution {
-    public boolean isMatch(String s, String p) {
-        int m = s.length() + 1, n = p.length() + 1;
-        boolean[][] dp = new boolean[m][n];
-        dp[0][0] = true;
-        // 初始化首行
-        for(int j = 2; j < n; j += 2)
-            dp[0][j] = dp[0][j - 2] && p.charAt(j - 1) == '*';
-        // 状态转移
-        for(int i = 1; i < m; i++) {
-            for(int j = 1; j < n; j++) {
-                if(p.charAt(j - 1) == '*') {
-                    if(dp[i][j - 2]) dp[i][j] = true;                                            // 1.
-                    else if(dp[i - 1][j] && s.charAt(i - 1) == p.charAt(j - 2)) dp[i][j] = true; // 2.
-                    else if(dp[i - 1][j] && p.charAt(j - 2) == '.') dp[i][j] = true;             // 3.
-                } else {
-                    if(dp[i - 1][j - 1] && s.charAt(i - 1) == p.charAt(j - 1)) dp[i][j] = true;  // 1.
-                    else if(dp[i - 1][j - 1] && p.charAt(j - 1) == '.') dp[i][j] = true;         // 2.
-                }
-            }
-        }
-        return dp[m - 1][n - 1];
+    public void pop() {
+        if(A.pop().equals(B.peek()))
+            B.pop();
     }
-}
-
-```
-
-# 30. 
-
-## 题目描述【简单】
-
-请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。
-
-数值（按顺序）可以分成以下几个部分：
-
-- 若干空格
-- 一个 小数 或者 整数
-- （可选）一个 'e' 或 'E' ，后面跟着一个 整数
-- 若干空格
-
-小数（按顺序）可以分成以下几个部分：
-
-- （可选）一个符号字符（'+' 或 '-'）
-- 下述格式之一：
-  - 至少一位数字，后面跟着一个点 '.'
-  - 至少一位数字，后面跟着一个点 '.' ，后面再跟着至少一位数字
-  - 一个点 '.' ，后面跟着至少一位数字
-
-整数（按顺序）可以分成以下几个部分：
-
-- （可选）一个符号字符（'+' 或 '-'）
-- 至少一位数字
-
-部分数值列举：["+100", "5e2", "-123", "3.1416", "-1E-16", "0123"]
-
-部分非数值列举：["12e", "1a3.14", "1.2.3", "+-5", "12e+5.4"]
-
-
-## 解题思路
-
-https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/solution/mian-shi-ti-20-biao-shi-shu-zhi-de-zi-fu-chuan-y-2/
-
-本题使用有限状态自动机。根据字符类型和合法数值的特点，先定义状态，再画出状态转移图，最后编写代码即可。
-
-**状态定义：**
-
-按照字符串从左到右的顺序，定义以下 9 种状态。
-
-0. 开始的空格
-1. 幂符号前的正负号
-2. 小数点前的数字
-3. 小数点、小数点后的数字
-4. 当小数点前为空格时，小数点、小数点后的数字
-5. 幂符号
-6. 幂符号后的正负号
-7. 幂符号后的数字
-8. 结尾的空格
-
-**结束状态：**
-
-合法的结束状态有 2, 3, 7, 8 。
-
-![image-20230409234426231](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304092344340.png)
-
-```java
-class Solution {
-    public boolean isNumber(String s) {
-        Map[] states = {
-            new HashMap<>() {{ put(' ', 0); put('s', 1); put('d', 2); put('.', 4); }}, // 0.
-            new HashMap<>() {{ put('d', 2); put('.', 4); }},                           // 1.
-            new HashMap<>() {{ put('d', 2); put('.', 3); put('e', 5); put(' ', 8); }}, // 2.
-            new HashMap<>() {{ put('d', 3); put('e', 5); put(' ', 8); }},              // 3.
-            new HashMap<>() {{ put('d', 3); }},                                        // 4.
-            new HashMap<>() {{ put('s', 6); put('d', 7); }},                           // 5.
-            new HashMap<>() {{ put('d', 7); }},                                        // 6.
-            new HashMap<>() {{ put('d', 7); put(' ', 8); }},                           // 7.
-            new HashMap<>() {{ put(' ', 8); }}                                         // 8.
-        };
-        int p = 0;
-        char t;
-        for(char c : s.toCharArray()) {
-            if(c >= '0' && c <= '9') t = 'd';
-            else if(c == '+' || c == '-') t = 's';
-            else if(c == 'e' || c == 'E') t = 'e';
-            else if(c == '.' || c == ' ') t = c;
-            else t = '?';
-            if(!states[p].containsKey(t)) return false;
-            p = (int)states[p].get(t);
-        }
-        return p == 2 || p == 3 || p == 7 || p == 8;
+    public int top() {
+        return A.peek();
+    }
+    public int min() {
+        return B.peek();
     }
 }
 ```
