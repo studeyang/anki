@@ -1,12 +1,18 @@
 # 11. 旋转数组的最小数字
 
-[牛客网](https://www.nowcoder.com/practice/9f3231a991af4f55b95579b44b7a01ba?tpId=13&tqId=11159&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking&from=cyc_github)
+## 题目描述【简单】
 
-## 题目描述
+把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。
 
-把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个非递减排序的数组的一个旋转，输出旋转数组的最小元素。
+给你一个可能存在 重复 元素值的数组 numbers ，它原来是一个升序排列的数组，并按上述情形进行了一次旋转。请返回旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一次旋转，该数组的最小值为 1。  
 
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/0038204c-4b8a-42a5-921d-080f6674f989.png" width="210px"> </div><br>
+注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]] 。
+
+来源：力扣（LeetCode）
+链接：https://leetcode.cn/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/0038204c-4b8a-42a5-921d-080f6674f989.png" width="210px"> </div>
 
 ## 解题思路
 
@@ -63,7 +69,7 @@ public class Solution {
 
 https://leetcode.cn/problems/ju-zhen-zhong-de-lu-jing-lcof/
 
-## 题目描述
+## 题目描述【中等】
 
 给定一个 `m x n` 二维字符网格 `board` 和一个字符串单词 `word` 。如果 `word` 存在于网格中，返回 `true` ；否则，返回 `false` 。
 
@@ -125,7 +131,7 @@ class Solution {
 
 https://leetcode.cn/problems/jian-sheng-zi-lcof/
 
-## 题目描述
+## 题目描述【中等】
 
 给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），每段绳子的长度记为 `k[0],k[1]...k[m-1]` 。请问 `k[0]*k[1]*...*k[m-1]` 可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
 
@@ -177,7 +183,7 @@ public int cutRope(int n) {
 
 https://leetcode.cn/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/
 
-## 题目描述
+## 题目描述【简单】
 
 输入一个整数，输出该数二进制表示中 1 的个数。
 
@@ -203,7 +209,7 @@ public int NumberOf1(int n) {
 
 https://leetcode.cn/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/
 
-## 题目描述
+## 题目描述【中等】
 
 给定一个 double 类型的浮点数 x 和 int 类型的整数 n，求 x 的 n 次方。
 
@@ -216,7 +222,9 @@ https://leetcode.cn/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/
 ```
 
 输入：x = 2.00000, n = -2
+
 输出：0.25000
+
 解释：2<sup>-2</sup> = 1/2<sup>2</sup> = 1/4 = 0.25
 
 ## 解题思路
@@ -227,7 +235,7 @@ https://leetcode.cn/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/
 
 本题中子问题是 x<sup>n/2</sup>，在将子问题合并时将子问题的解乘于自身相乘即可。但如果 n 不为偶数，那么拆成两半还会剩下一个 x，在将子问题合并时还需要需要多乘于一个 x。
 
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20201105012506187.png" width="400px"> </div><br>
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20201105012506187.png" width="400px"> </div>
 
 因为 `(x*x)`<sup>n/2</sup> 可以通过递归求解，并且每次递归 n 都减小一半，因此整个算法的时间复杂度为 O(logN)。
 
@@ -257,7 +265,7 @@ class Solution {
 
 https://leetcode.cn/problems/da-yin-cong-1dao-zui-da-de-nwei-shu-lcof/
 
-## 题目描述
+## 题目描述【简单】
 
 输入数字 n，按顺序打印出从 1 到最大的 n 位十进制数。比如输入 3，则打印出 1、2、3 一直到最大的 3 位数即 999。
 
@@ -286,7 +294,7 @@ class Solution {
 
 https://leetcode.cn/problems/shan-chu-lian-biao-de-jie-dian-lcof/
 
-## 题目描述
+## 题目描述【简单】
 
 给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
 
@@ -326,7 +334,7 @@ class Solution {
 
 https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/
 
-## 题目描述
+## 题目描述【困难】
 
 `请实现一个函数用来匹配包含'.'和'*'的正则表达式。模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但与"aa.a"和"ab*a"均不匹配。`
 
@@ -363,7 +371,7 @@ https://leetcode.cn/problems/zheng-ze-biao-da-shi-pi-pei-lcof/solution/jian-zhi-
 
 当 `p[j - 1] = '*'` 时， `dp[i][j]` 在当以下任一情况为 true 时等于 true：
 
-1. **`dp[i - 1][j]` 且 `s[i - 1] = p[j - 2]`:** 即让字符 `p[j - 2]` 多出现 1 次时，能否匹配；
+1. **`dp[i][j - 2]`:** 即将字符组合 `p[j - 2] *` 看作出现 0 次时，能否匹配；
 2. **`dp[i - 1][j]` 且 `s[i - 1] = p[j - 2]`:** 即让字符 `p[j - 2]` 多出现 1 次时，能否匹配；
 3. **`dp[i - 1][j]` 且 `p[j - 2] = '.'`:** 即让字符 `'.'` 多出现 1 次时，能否匹配；
 
@@ -413,7 +421,7 @@ class Solution {
 
 https://leetcode.cn/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/
 
-## 题目描述
+## 题目描述【中等】
 
 请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。
 
