@@ -534,17 +534,55 @@ class Solution {
 }
 ```
 
-# 37. 
+# 37. [序列化二叉树](https://leetcode.cn/problems/xu-lie-hua-er-cha-shu-lcof/)
 
-## 题目描述【】
+## 题目描述【困难】
 
-请完成一个函数，输入一个二叉树，该函数输出它的镜像。
+请实现两个函数，分别用来序列化和反序列化二叉树。
 
-例如输入：
+你需要设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+
+提示：输入输出格式与 LeetCode 目前使用的方式一致，详情请参阅 LeetCode 序列化二叉树的格式。你并非必须采取这种方式，你也可以采用其他的方法解决这个问题。
+
+ 示例：
+
+```
+  1
+ / \
+2   3
+   / \
+  4   5
+输入：root = [1,2,3,null,null,4,5]
+输出：[1,2,3,null,null,4,5]
+```
 
 ## 解题思路
 
+序列化 Serialize 算法流程：
 
+1. 特例处理： 若 root 为空，则直接返回空列表 "[]" ；
+2. 初始化： 队列 queue （包含根节点 root ）；序列化列表 res ；
+3. 层序遍历： 当 queue 为空时跳出；
+   - 节点出队，记为 node ；
+   - 若 node 不为空：① 打印字符串 node.val ，② 将左、右子节点加入 queue ；
+   - 否则（若 node 为空）：打印字符串 "null" ；
+4. 返回值： 拼接列表，用 ',' 隔开，首尾添加中括号；
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304202357470.gif)
+
+反序列化 Deserialize 算法流程：
+
+1. 特例处理： 若 data 为空，直接返回 null ；
+2. 初始化： 序列化列表 vals （先去掉首尾中括号，再用逗号隔开），指针 i = 1 ，根节点 root （值为 vals[0] ），队列 queue（包含 root ）；
+3. 按层构建： 当 queue 为空时跳出；
+   - 节点出队，记为 node ；
+   - 构建 node 的左子节点：node.left 的值为 vals[i] ，并将 node.left 入队；
+   - 执行 i += 1 ；
+   - 构建 node 的右子节点：node.left 的值为 vals[i] ，并将 node.left 入队；
+   - 执行 i += 1 ；
+4. 返回值： 返回根节点 root 即可；
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304210002353.gif)
 
 ```java
 /**
@@ -556,56 +594,66 @@ class Solution {
  *     TreeNode(int x) { val = x; }
  * }
  */
-class Solution {
-    public TreeNode mirrorTree(TreeNode root) {
-        if (root == null) return null;
-        TreeNode leftRoot = mirrorTree(root.right);
-        TreeNode rightRoot = mirrorTree(root.left);
-        root.left = leftRoot;
-        root.right = rightRoot;
+public class Codec {
+    public String serialize(TreeNode root) {
+        if(root == null) return "[]";
+        StringBuilder res = new StringBuilder("[");
+        Queue<TreeNode> queue = new LinkedList<>() {{ add(root); }};
+        while(!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if(node != null) {
+                res.append(node.val + ",");
+                queue.add(node.left);
+                queue.add(node.right);
+            }
+            else res.append("null,");
+        }
+        res.deleteCharAt(res.length() - 1);
+        res.append("]");
+        return res.toString();
+    }
+
+    public TreeNode deserialize(String data) {
+        if(data.equals("[]")) return null;
+        String[] vals = data.substring(1, data.length() - 1).split(",");
+        TreeNode root = new TreeNode(Integer.parseInt(vals[0]));
+        Queue<TreeNode> queue = new LinkedList<>() {{ add(root); }};
+        int i = 1;
+        while(!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if(!vals[i].equals("null")) {
+                node.left = new TreeNode(Integer.parseInt(vals[i]));
+                queue.add(node.left);
+            }
+            i++;
+            if(!vals[i].equals("null")) {
+                node.right = new TreeNode(Integer.parseInt(vals[i]));
+                queue.add(node.right);
+            }
+            i++;
+        }
         return root;
     }
 }
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec = new Codec();
+// codec.deserialize(codec.serialize(root));
 ```
 
-# 38. 
+# 38. [字符串的排列](https://leetcode.cn/problems/zi-fu-chuan-de-pai-lie-lcof/)
 
-## 题目描述【】
+## 题目描述【中等】
 
-请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
+输入一个字符串，打印出该字符串中字符的所有排列。
 
-例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+你可以以任意顺序返回这个字符串数组，但里面不能有重复元素。
 
-```
-    1
-   / \
-  2   2
- / \ / \
-3  4 4  3
-```
-
-但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+**示例:**
 
 ```
-    1
-   / \
-  2   2
-   \   \
-   3    3
-```
-
-**示例 1：**
-
-```
-输入：root = [1,2,2,3,4,4,3]
-输出：true
-```
-
-**示例 2：**
-
-```
-输入：root = [1,2,2,null,3,null,3]
-输出：false
+输入：s = "abc"
+输出：["abc","acb","bac","bca","cab","cba"]
 ```
 
 ## 解题思路
@@ -613,123 +661,117 @@ class Solution {
 
 
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
 class Solution {
-    public boolean isSymmetric(TreeNode root) {
-        return root == null ? true : recur(root.left, root.right);
-    }
-    boolean recur(TreeNode L, TreeNode R) {
-        if(L == null && R == null) return true;
-        if(L == null || R == null || L.val != R.val) return false;
-        return recur(L.left, R.right) && recur(L.right, R.left);
+    public String[] permutation(String s) {
+
     }
 }
 ```
 
-# 39. 
+# 39. [数组中出现次数超过一半的数字](https://leetcode.cn/problems/shu-zu-zhong-chu-xian-ci-shu-chao-guo-yi-ban-de-shu-zi-lcof/)
 
-## 题目描述【】
+## 题目描述【简单】
 
-输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。
 
-示例1：
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。
 
-```
-输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
-输出：[1,2,3,6,9,8,7,4,5]
-```
-
-示例2：
+示例 1:
 
 ```
-输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
-输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+输入: [1, 2, 3, 2, 2, 2, 5, 4, 2]
+输出: 2
 ```
 
 ## 解题思路
 
+本题常见的三种解法：
 
+- 哈希表统计法： 遍历数组 nums ，用 HashMap 统计各数字的数量，即可找出 众数 。此方法时间和空间复杂度均为 O(N) 。
+- 数组排序法： 将数组 nums 排序，数组中点的元素 一定为众数。
+- 摩尔投票法： 核心理念为 票数正负抵消 。此方法时间和空间复杂度分别为 O(N) 和 O(1) ，为本题的最佳解法。
+
+算法流程:
+
+1. 初始化： 票数统计 votes = 0 ， 众数 x；
+2. 循环： 遍历数组 nums 中的每个数字 num ；
+   - 当 票数 votes 等于 0 ，则假设当前数字 num 是众数；
+   - 当 num = x 时，票数 votes 自增 1 ；当 num != x 时，票数 votes 自减 1 ；
+3. 返回值： 返回 x 即可；
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304222028139.gif)
 
 ```java
 class Solution {
-    public int[] spiralOrder(int[][] matrix) {
-        if(matrix.length == 0) return new int[0];
-        int l = 0, r = matrix[0].length - 1, t = 0, b = matrix.length - 1, x = 0;
-        int[] res = new int[(r + 1) * (b + 1)];
-        while(true) {
-            //从左往右，上边界内缩：++t
-            for(int i = l; i <= r; i++) res[x++] = matrix[t][i];
-            if(++t > b) break;
-            //从上往下，右边界收缩：--r
-            for(int i = t; i <= b; i++) res[x++] = matrix[i][r];
-            if(l > --r) break;
-            //从右往左，下边界收缩：--b
-            for(int i = r; i >= l; i--) res[x++] = matrix[b][i];
-            if(t > --b) break;
-            //从下到上，左边界收缩：++l
-            for(int i = b; i >= t; i--) res[x++] = matrix[i][l];
-            if(++l > r) break;
+    public int majorityElement(int[] nums) {
+        int x = 0, votes = 0;
+        for(int num : nums){
+            if(votes == 0) x = num;
+            votes += num == x ? 1 : -1;
+        }
+        return x;
+    }
+}
+```
+
+# 40. [最小的k个数](https://leetcode.cn/problems/zui-xiao-de-kge-shu-lcof/)
+
+## 题目描述【简单】
+
+输入整数数组 arr ，找出其中最小的 k 个数。例如，输入[4、5、1、6、2、7、3、8]这8个数字，则最小的4个数字是1、2、3、4。
+
+示例 1：
+
+```
+输入：arr = [3,2,1], k = 2
+输出：[1,2] 或者 [2,1]
+```
+
+示例 2：
+
+```
+输入：arr = [0,1,2,1], k = 1
+输出：[0]
+```
+
+
+## 解题思路
+
+使用大根堆排序。
+
+保持堆的大小为K，然后遍历数组中的数字，遍历的时候做如下判断：
+
+1. 若目前堆的大小小于K，将当前数字放入堆中。
+2. 否则判断当前数字与大根堆堆顶元素的大小关系，如果当前数字比大根堆堆顶还大，这个数就直接跳过；
+
+反之如果当前数字比大根堆堆顶小，先poll掉堆顶，再将该数字放入堆中。
+
+链接：https://leetcode.cn/problems/zui-xiao-de-kge-shu-lcof/solution/3chong-jie-fa-miao-sha-topkkuai-pai-dui-er-cha-sou/
+
+```java
+class Solution {
+    public int[] getLeastNumbers(int[] arr, int k) {
+        if (k == 0 || arr.length == 0) {
+            return new int[0];
+        }
+        // 默认是小根堆，实现大根堆需要重写一下比较器。
+        Queue<Integer> pq = new PriorityQueue<>((v1, v2) -> v2 - v1);
+        for (int num: arr) {
+            if (pq.size() < k) {
+                pq.offer(num);
+            } else if (num < pq.peek()) {
+                pq.poll();
+                pq.offer(num);
+            }
+        }
+        
+        // 返回堆中的元素
+        int[] res = new int[pq.size()];
+        int idx = 0;
+        for(int num: pq) {
+            res[idx++] = num;
         }
         return res;
-    }
-}
-```
-
-# 40. 
-
-## 题目描述【】
-
-定义栈的数据结构，请在该类型中实现一个能够得到栈的最小元素的 min 函数在该栈中，调用 min、push 及 pop 的时间复杂度都是 O(1)。
-
-示例：
-
-```
-MinStack minStack = new MinStack();
-minStack.push(-2);
-minStack.push(0);
-minStack.push(-3);
-minStack.min();   --> 返回 -3.
-minStack.pop();
-minStack.top();      --> 返回 0.
-minStack.min();   --> 返回 -2.
-```
-
-
-## 解题思路
-
-
-
-
-
-```java
-class MinStack {
-    Stack<Integer> A, B;
-    public MinStack() {
-        A = new Stack<>();
-        B = new Stack<>();
-    }
-    public void push(int x) {
-        A.add(x);
-        if(B.empty() || B.peek() >= x)
-            B.add(x);
-    }
-    public void pop() {
-        if(A.pop().equals(B.peek()))
-            B.pop();
-    }
-    public int top() {
-        return A.peek();
-    }
-    public int min() {
-        return B.peek();
     }
 }
 ```
