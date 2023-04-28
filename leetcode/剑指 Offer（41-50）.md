@@ -35,10 +35,45 @@
 
 ## 解题思路
 
+建立一个 小顶堆 A 和 大顶堆 B ，各保存列表的一半元素，*A* 保存 **较大** 的一半，*B* 保存 **较小** 的一半。如果是奇数个，则 A 多保存一个。
 
+随后，中位数可仅根据 A,B 的堆顶元素计算得到。
+
+![image-20230428231114807](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304282311941.png)
+
+addNum(num) 函数：
+
+1. 当 m=n（即 N 为 偶数）：需向 A 添加一个元素。实现方法：将新元素 num 插入至 B ，再将 B 堆顶元素插入至 A ；
+2. 当 m ≠ n（即 N 为 奇数）：需向 B 添加一个元素。实现方法：将新元素 num 插入至 A ，再将 A 堆顶元素插入至 B ；
+
+findMedian() 函数：
+
+1. 当 m=n（ N 为 偶数）：则中位数为 ( A 的堆顶元素 + B 的堆顶元素 )/2。
+2. 当 m ≠ n（ N 为 奇数）：则中位数为 A 的堆顶元素。
+
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/202304282321493.gif)
 
 ```java
-
+class MedianFinder {
+    Queue<Integer> A, B;
+    public MedianFinder() {
+        A = new PriorityQueue<>(); // 小顶堆，保存较大的一半
+        B = new PriorityQueue<>((x, y) -> (y - x)); // 大顶堆，保存较小的一半
+    }
+    public void addNum(int num) {
+        if(A.size() != B.size()) {
+            A.add(num);
+            B.add(A.poll());
+        } else {
+            B.add(num);
+            A.add(B.poll());
+        }
+    }
+    public double findMedian() {
+        return A.size() != B.size() ? A.peek() : (A.peek() + B.peek()) / 2.0;
+    }
+}
 ```
 
 # 42. 
