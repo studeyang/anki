@@ -92,15 +92,53 @@ class MedianFinder {
 
 ## 解题思路
 
+动态规划解析：
 
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230430181927593.png)
+
+- 状态定义： 设动态规划列表 dp ，dp[i] 代表以元素 nums[i] 为结尾的连续子数组最大和。
+- 转移方程： 若 dp[i−1]≤0 ，说明 dp[i−1] 对 dp[i] 产生负贡献，即 dp[i−1]+nums[i] 还不如 nums[i] 本身大。
+  - 当 dp[i−1]>0 时：执行 dp[i]=dp[i−1]+nums[i] ；
+  - 当 dp[i−1]≤0 时：执行 dp[i]=nums[i] ；
+- 初始状态： dp[0]=nums[0]，即以 nums[0] 结尾的连续子数组最大和为 nums[0] 。
+- 返回值： 返回 dp 列表中的最大值，代表全局最大值。
 
 ```java
-
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        int res = dp[0];
+        for (int i = 1; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 1] + nums[i], nums[i]);
+            res = Math.max(res, dp[i]);
+        }
+        return res;
+    }
+}
 ```
 
-# 43. 
+# 【x】43. [1～n 整数中 1 出现的次数](https://leetcode.cn/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/)
 
 ## 题目描述【困难】
+
+输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。
+
+例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次。
+
+**示例 1：**
+
+```
+输入：n = 12
+输出：5
+```
+
+**示例 2：**
+
+```
+输入：n = 13
+输出：6
+```
 
 ## 解题思路
 
@@ -108,9 +146,28 @@ class MedianFinder {
 
 ```
 
-# 44. 
+# 44. [数字序列中某一位的数字](https://leetcode.cn/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof/)
 
 ## 题目描述【中等】
+
+数字以0123456789101112131415…的格式序列化到一个字符序列中。在这个序列中，第5位（从下标0开始计数）是5，第13位是1，第19位是4，等等。
+
+请写一个函数，求任意第n位对应的数字。
+
+示例 1：
+
+```
+输入：n = 3
+输出：3
+```
+
+
+示例 2：
+
+```
+输入：n = 11
+输出：0
+```
 
 ## 解题思路
 
@@ -135,7 +192,7 @@ class MedianFinder {
 
 # 46. 
 
-## 题目描述【】
+## 题目描述【中等】
 
 
 
@@ -149,7 +206,7 @@ class MedianFinder {
 
 # 47. 
 
-## 题目描述【】
+## 题目描述【中等】
 
 ## 解题思路
 
@@ -161,7 +218,7 @@ class MedianFinder {
 
 # 48. 
 
-## 题目描述【】
+## 题目描述【中等】
 
 ## 解题思路
 
@@ -173,7 +230,7 @@ class MedianFinder {
 
 # 49. 
 
-## 题目描述【】
+## 题目描述【中等】
 
 ## 解题思路
 
@@ -185,7 +242,7 @@ class MedianFinder {
 
 # 50. 
 
-## 题目描述【】
+## 题目描述【简单】
 
 
 ## 解题思路
