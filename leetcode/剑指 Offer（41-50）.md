@@ -367,31 +367,162 @@ class Solution {
 
 ## 题目描述【中等】
 
-## 解题思路
+在一个 m*n 的棋盘的每一格都放有一个礼物，每个礼物都有一定的价值（价值大于 0）。你可以从棋盘的左上角开始拿格子里的礼物，并每次向右或者向下移动一格、直到到达棋盘的右下角。给定一个棋盘及其上面的礼物的价值，请计算你最多能拿到多少价值的礼物？
 
-
-
-```java
+示例 1:
 
 ```
+输入: 
+[
+  [1,3,1],
+  [1,5,1],
+  [4,2,1]
+]
+输出: 12
+解释: 路径 1→3→5→2→1 可以拿到最多价值的礼物
+```
 
-# 48. 
+## 解题思路
+
+设 f(i,j) 为从棋盘左上角走至单元格 (i,j) 的礼物最大累计价值，易得到以下递推关系：f(i,j) 等于 f(i,j−1) 和 f(i−1,j) 中的较大值加上当前单元格礼物价值
+grid(i,j) 。
+
+```
+f(i,j) = max[f(i,j−1), f(i−1,j)] + grid(i,j)
+```
+
+动态规划解析：
+
+- 状态定义： 设动态规划矩阵 dp ，dp(i,j) 代表从棋盘的左上角开始，到达单元格 (i,j) 时能拿到礼物的最大累计价值。
+- 转移方程：
+  1. 当 i=0 且 j=0 时，为起始元素；
+  2. 当 i=0 且 j≠0 时，为矩阵第一行元素，只可从左边到达；
+  3. 当 i≠0 且 j=0 时，为矩阵第一列元素，只可从上边到达；
+  4. 当 i≠0 且 j≠0 时，可从左边或上边到达；
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230502150428256.png)
+
+- 初始状态： dp\[0\]\[0\]=grid\[0\]\[0\] ，即到达单元格 (0,0) 时能拿到礼物的最大累计价值为 grid\[0\]\[0\]；
+- 返回值： dp\[m−1\]\[n−1\] ，m,n 分别为矩阵的行高和列宽，即返回 dp 矩阵右下角元素。
+
+> 时间复杂度 O(MN) ： M,N 分别为矩阵行高、列宽；动态规划需遍历整个 grid 矩阵，使用 O(MN) 时间。
+>
+> 空间复杂度 O(1) ： 原地修改使用常数大小的额外空间。
+
+```java
+class Solution {
+    public int maxValue(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(i == 0 && j == 0) continue;
+                if(i == 0) grid[i][j] += grid[i][j - 1] ;
+                else if(j == 0) 
+                    grid[i][j] += grid[i - 1][j];
+                else 
+                    grid[i][j] += Math.max(grid[i][j - 1], grid[i - 1][j]);
+            }
+        }
+        return grid[m - 1][n - 1];
+    }
+}
+```
+
+# 48. [最长不含重复字符的子字符串](https://leetcode.cn/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/)
 
 ## 题目描述【中等】
 
-## 解题思路
+请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
 
-
-
-```java
+示例 1:
 
 ```
+输入: "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+```
 
-# 49. 
+示例 2:
+
+```
+输入: "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+```
+
+示例 3:
+
+```
+输入: "pwwkew"
+输出: 3
+解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+```
+
+## 解题思路
+
+动态规划解析：
+
+- 状态定义： 设动态规划列表 dp ，dp[j] 代表以字符 s[j] 为结尾的 “最长不重复子字符串” 的长度。
+- 转移方程： 固定右边界 j ，设字符 s[j] 左边距离最近的相同字符为 s[i] ，即 s[i]=s[j] 。
+  1. 当 i<0 ，即 s[j] 左边无相同字符，则 dp[j]=dp[j−1]+1 ；
+  2. 当 dp[j−1]<j−i ，说明字符 s[i] 在子字符串 dp[j−1] 区间之外 ，则 dp[j]=dp[j−1]+1 ；
+  3. 当 dp[j−1]≥j−i ，说明字符 s[i] 在子字符串 dp[j−1] 区间之中 ，则 dp[j] 的左边界由 s[i] 决定，即 dp[j]=j−i ；
+
+> 由于 dp[j−1]≤j 恒成立，因而 dp[j−1]<j−i 恒成立，因此分支 1. 和 2. 可被合并。
+>
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230502212602892.png)
+
+- 返回值： max(dp) ，即全局的 “最长不重复子字符串” 的长度。
+
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230502213036638.png)
+
+```java
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        Map<Character, Integer> dic = new HashMap<>();
+        int res = 0, tmp = 0;
+        for(int j = 0; j < s.length(); j++) {
+            // 获取索引 i
+            int i = dic.getOrDefault(s.charAt(j), -1);
+            dic.put(s.charAt(j), j); // 更新哈希表
+            // dp[j - 1] -> dp[j]
+            tmp = tmp < j - i ? tmp + 1 : j - i;
+            // max(dp[j - 1], dp[j])
+            res = Math.max(res, tmp);
+        }
+        return res;
+    }
+}
+```
+
+# 49. [丑数](https://leetcode.cn/problems/chou-shu-lcof/)
 
 ## 题目描述【中等】
 
+我们把只包含质因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数。
+
+示例:
+
+```
+输入: n = 10
+输出: 12
+解释: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 是前 10 个丑数。
+```
+
+说明:  
+
+1. 1 是丑数。
+2. n 不超过1690。
+
 ## 解题思路
+
+动态规划解析：
+
+- 状态定义： 设动态规划列表 dp[i] 代表第 i+1 个丑数；
+- 转移方程：
+  1. 当索引 a,b,c 满足以下条件时， dp[i] 为三种情况的最小值；
+  2. 每轮计算 dp[i] 后，需要更新索引 a,b,c 的值，使其始终满足方程条件。实现方法：分别独立判断 dp[i] 和 dp[a]×2 , dp[b]×3 , dp[c]×5 的大小关系，若相等则将对应索引 a , b , c 加 1 ；
 
 
 
