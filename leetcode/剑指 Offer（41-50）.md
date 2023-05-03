@@ -519,27 +519,81 @@ class Solution {
 
 动态规划解析：
 
-- 状态定义： 设动态规划列表 dp[i] 代表第 i+1 个丑数；
+- 状态定义： 设动态规划列表 dp[i-1] 代表第 i 个丑数；
 - 转移方程：
   1. 当索引 a,b,c 满足以下条件时， dp[i] 为三种情况的最小值；
   2. 每轮计算 dp[i] 后，需要更新索引 a,b,c 的值，使其始终满足方程条件。实现方法：分别独立判断 dp[i] 和 dp[a]×2 , dp[b]×3 , dp[c]×5 的大小关系，若相等则将对应索引 a , b , c 加 1 ；
+     - dp[a] * 2 > dp[i-1] ≥ dp[a-1] * 2：即 dp[a] 为首个乘以2后大于dp[i-1]的丑数
+     - dp[b] * 3 > dp[i-1] ≥ dp[b-1] * 3：即 dp[b] 为首个乘以3后大于dp[i-1]的丑数
+     - dp[c] * 5 > dp[i-1] ≥ dp[c-1] * 5：即 dp[c] 为首个乘以5后大于dp[i-1]的丑数
 
+![](https://technotes.oss-cn-shenzhen.aliyuncs.com/2023/image-20230503115207818.png)
 
+- 初始状态： dp[0]=1 ，即第一个丑数为 1 ；
+- 返回值： dp[n−1] ，即返回第 n 个丑数；
+
+> 时间复杂度 O(N) ： 其中 N=n ，动态规划需遍历计算 dp 列表。
+>
+> 空间复杂度 O(N) ： 长度为 N 的 dp 列表使用 O(N) 的额外空间。
 
 ```java
-
+class Solution {
+    public int nthUglyNumber(int n) {
+        int a = 0, b = 0, c = 0;
+        int[] dp = new int[n];
+        dp[0] = 1;
+        for(int i = 1; i < n; i++) {
+            int n2 = dp[a] * 2, n3 = dp[b] * 3, n5 = dp[c] * 5;
+            dp[i] = Math.min(Math.min(n2, n3), n5);
+            if(dp[i] == n2) a++;
+            if(dp[i] == n3) b++;
+            if(dp[i] == n5) c++;
+        }
+        return dp[n - 1];
+    }
+}
 ```
 
-# 50. 
+# 50. [第一个只出现一次的字符](https://leetcode.cn/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
 
 ## 题目描述【简单】
+
+在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。
+
+示例 1:
+
+```
+输入：s = "abaccdeff"
+输出：'b'
+```
+
+示例 2:
+
+```
+输入：s = "" 
+输出：' '
+```
 
 
 ## 解题思路
 
+有序哈希表：
 
+1. 遍历字符串 `s` ，使用哈希表统计 “各字符数量是否 >1 ”。
+2. 再遍历字符串 `s` ，在哈希表中找到首个 “数量为 1 的字符”，并返回。
 
 ```java
-
+class Solution {
+    public char firstUniqChar(String s) {
+        Map<Character, Boolean> dic = new LinkedHashMap<>();
+        char[] sc = s.toCharArray();
+        for(char c : sc)
+            dic.put(c, !dic.containsKey(c));
+        for(Map.Entry<Character, Boolean> d : dic.entrySet()){
+           if(d.getValue()) return d.getKey();
+        }
+        return ' ';
+    }
+}
 ```
 
