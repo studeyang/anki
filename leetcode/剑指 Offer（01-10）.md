@@ -1,19 +1,15 @@
 
 
-# 3. 数组中重复的数字
-
-[牛客网](https://www.nowcoder.com/practice/6fe361ede7e54db1b84adc81d09d8524?tpId=13&tqId=11203&tab=answerKey&from=cyc_github)
+# 3. [数组中重复的数字](https://leetcode.cn/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/)
 
 ## 题目描述【简单】
 
-在一个长度为 n 的数组里的所有数字都在 0 到 n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字是重复的，也不知道每个数字重复几次。请找出数组中任意一个重复的数字。
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。
 
 ```html
-Input:
-{2, 3, 1, 0, 2, 5}
-
-Output:
-2
+输入：
+[2, 3, 1, 0, 2, 5, 3]
+输出：2 或 3 
 ```
 
 ## 解题思路
